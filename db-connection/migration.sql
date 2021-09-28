@@ -24,7 +24,7 @@ CREATE TABLE  models(
     FOREIGN KEY (marque_id) REFERENCES marques(id)
 );
 
-CREATE TABLE articles(
+CREATE TABLE annonce(
      id INT NOT NULL AUTO_INCREMENT,
      titre VARCHAR(255) NOT NULL,
      contenu TEXT NOT NULL,
