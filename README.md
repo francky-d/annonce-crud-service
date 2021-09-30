@@ -8,14 +8,14 @@
 ## Create an announce
 
 ````
-CURL X POST  http://127.0.0.1:8000/api/annonce/add 
--H 'Content-Type: application/json'
--d '{"titre" : "Vente d'une voiture", "contenu" : "Vente de voiture BMW", "categorie" : "Automobile", "marque" : "BMW", "modele" : "M4" }'
+curl -X POST  http://127.0.0.1:8000/api/annonce/add \
+-H 'Content-Type: application/json' \
+-d '{"titre" : "Voiture mise en vente", "contenu" : "Vente de voiture BMW", "categorie" : "Automobile", "marque" : "BMW", "modele" : "M4" }' 
 ````
 ### Reponse  Create annonce
 ````
 {
-    "id": 2,
+    "id": 1,
     "message": "Annonce créé avec success"
 }
 ```` 
@@ -24,9 +24,9 @@ CURL X POST  http://127.0.0.1:8000/api/annonce/add
 ## Update an announce
 
 ````
-CURL X POST   http://127.0.0.1:8000/api/annonce/update/1
--H 'Content-Type: application/json'
--d '{"titre" : "Voiture à vendre", "contenu" : "Vente de voiture BMW", "categorie" : "Automobile", "marque" : "BMW", "modele" : "M4" }'
+curl -X POST   http://127.0.0.1:8000/api/annonce/update/1 \
+-H 'Content-Type: application/json' \
+-d '{"titre" : "Une voiture de luxe", "contenu" : "Vente de voiture BMW", "categorie" : "Automobile", "marque" : "BMW", "modele" : "M4" }'
 ````
 ### Reponse  Create annonce
 ````
@@ -39,7 +39,7 @@ CURL X POST   http://127.0.0.1:8000/api/annonce/update/1
 ## Retreive all announce
 
 ````
-curl  http://127.0.0.1:8000/api/annonce/all
+curl  http://127.0.0.1:8000/api/annonce/all \
 -H "Accept: application/json"
 ````
 ### Reponse  list annonunce
@@ -70,14 +70,14 @@ curl  http://127.0.0.1:8000/api/annonce/all
 ## Get announce detail
 
 ````
-curl   http://127.0.0.1:8000/api/annonce/detail/1
+curl   http://127.0.0.1:8000/api/annonce/detail/1 \
 -H "Accept: application/json"
 ````
 ### Reponse  annonce details
 ````
     "annonce:":  {
             "id": 1,
-            "titre": "Vente d'une voiture",
+            "titre": "Voiture mise en vente",
             "contenu": "Vente de voiture BMW",
             "categorie": "automobile",
             "marque": "bmw",
@@ -90,7 +90,7 @@ curl   http://127.0.0.1:8000/api/annonce/detail/1
 ## Delete Announce
 
 ````
-curl    http://127.0.0.1:8000/api/annonce/delete/1
+curl http://127.0.0.1:8000/api/annonce/delete/1 \
 -H "Accept: application/json"
 ````
 ### Reponse  annonce details
@@ -105,8 +105,8 @@ curl    http://127.0.0.1:8000/api/annonce/delete/1
 ## Search annonce by model libelle
 
 ````
-curl    http://127.0.0.1:8000/api/annonce/search
--H "Accept: application/json"
+curl    http://127.0.0.1:8000/api/annonce/search \
+-H "Accept: application/json" \
 -d '{ "modele" : "avant M4" }'
 ````
 ### Reponse  annonce details

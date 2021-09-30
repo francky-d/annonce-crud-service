@@ -14,8 +14,8 @@ func RouterInit(app *Application) {
 	groupAnn := router.Group("/api/annonce")
 	{
 		groupAnn.POST("/add", AnControl.Add)
-		groupAnn.POST("/update/:id/", AnControl.Update)
-		groupAnn.GET("/delete/:id/", AnControl.Delete)
+		groupAnn.POST("/update/:id", AnControl.Update)
+		groupAnn.GET("/delete/:id", AnControl.Delete)
 		groupAnn.GET("/all", AnControl.All)
 		groupAnn.GET("/detail/:id", AnControl.Detail)
 		groupAnn.POST("/search", AnControl.Search)

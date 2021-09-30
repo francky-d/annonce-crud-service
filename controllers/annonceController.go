@@ -128,7 +128,7 @@ func (AnCon *AnnonceController) Add(c *gin.Context) {
 	}
 
 	if len(errorsMap) > 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": fmt.Sprintf("%v", err)orsMap})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": errorsMap})
 		return
 	}
 
@@ -226,14 +226,14 @@ func (AnCon *AnnonceController) Update(c *gin.Context) {
 		return
 	}
 
-	annonce, err = AnCon.anRepo.GetById(idToInt)
+	annonceToModifiy, err := AnCon.anRepo.GetById(idToInt)
 	if err != nil {
 		log.Printf("Error while getting annonce for id %d ===>   %v",idToInt, err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
-	if annonce.Id > 0 {
+	if annonceToModifiy.Id > 0 {
 
 		allIds, errorsMap, err := AnCon.getAnnonceAddionalInfo(annonce, c)
 
@@ -244,7 +244,7 @@ func (AnCon *AnnonceController) Update(c *gin.Context) {
 		}
 
 		if len(errorsMap) > 0 {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": fmt.Sprintf("%v", err)orsMap})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors":  errorsMap})
 			return
 		}
 
