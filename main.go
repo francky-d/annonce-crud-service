@@ -1,16 +1,14 @@
 package main
 
 import (
+	. "github.com/franck-djacoto/announce-service/conf"
 	dbCon "github.com/franck-djacoto/announce-service/db-connection"
 	"github.com/franck-djacoto/announce-service/routes"
 	"github.com/joho/godotenv"
 	"log"
 )
 
-type App struct {
-	db dbCon.DbConnection
-}
-func LoadEnv(){
+func LoadEnv() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -18,15 +16,15 @@ func LoadEnv(){
 	}
 }
 
-func init(){
+func init() {
 
 }
 
-func main(){
+func main() {
 	LoadEnv()
-	var app App
-	app.db = dbCon.NewConnection()
-	app.db.MakeMigration()
-	routes.RouterInit()
+	var App Application
+	App.Db = dbCon.NewConnection()
+	App.Db.MakeMigration()
+	routes.RouterInit(&App)
 
 }

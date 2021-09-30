@@ -14,7 +14,8 @@ type DbConnection struct {
 	Db *sql.DB
 }
 
-func  NewConnection() DbConnection{
+func NewConnection() *DbConnection {
+	fmt.Println("Creating new connection to db...")
 	userName := os.Getenv("DB_USER")
 	userPassword := os.Getenv("DB_PASSWORD")
 	dbHost := os.Getenv("DB_HOST")
@@ -25,7 +26,7 @@ func  NewConnection() DbConnection{
 	}
 
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8",
-									userName, userPassword,dbHost,dbName ) // "username:password@(127.0.0.1:3306)/dbname?parseTime=true"
+		userName, userPassword, dbHost, dbName) // "username:password@(127.0.0.1:3306)/dbname?parseTime=true"
 	newDbConnection, err := sql.Open("mysql", dataSourceName)
 
 	if err != nil {
@@ -36,27 +37,31 @@ func  NewConnection() DbConnection{
 		log.Panicf("Error while pinging.. %v", dataSourceName)
 	}
 
-	return DbConnection{Db : newDbConnection}
+	fmt.Println("Db connection was successfully created !")
+
+	return &DbConnection{Db: newDbConnection}
 }
 
-func (dbConnect *DbConnection) MakeMigration(){
-	content , err := ioutil.ReadFile("./db-connection/migration.sql")
+func (dbConnect *DbConnection) MakeMigration() {
+	fmt.Println("Starting migration...")
+
+	content, err := ioutil.ReadFile("./db-connection/migration.sql")
 
 	if err != nil {
-		log.Panicf("Error while retreiving query for migration : %v", err )
+		log.Panicf("Error while retreiving query for migration : %v", err)
 	}
 
 	if string(content) == "" {
 		log.Panicf("Migration call without queries")
 	}
 
-	allQueries := strings.Split( string(content), ";")
+	allQueries := strings.Split(string(content), ";")
 
-	for _,query := range allQueries {
+	for _, query := range allQueries {
 		if strings.TrimSpace(query) != "" {
-			_, err := dbConnect.Db.Exec( query )
-			if  err != nil {
-				log.Panicf("Error while migrating : %v", err )
+			_, err := dbConnect.Db.Exec(query)
+			if err != nil {
+				log.Panicf("Error while migrating : %v", err)
 			}
 		}
 

@@ -1,2 +1,3 @@
-#How to run the project
-Clone the project and being at the root of the project, just run `docker-compose up`
+## How to run the project
+1. Clone the project  
+2. Being at the root of the project, just run `docker-compose up`

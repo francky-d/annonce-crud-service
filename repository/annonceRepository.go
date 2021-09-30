@@ -3,18 +3,18 @@ package repository
 import (
 	dbCon "github.com/franck-djacoto/announce-service/db-connection"
 	. "github.com/franck-djacoto/announce-service/models"
-
+	"time"
 )
 
 type AnnonceRepository struct {
 	DbConnect *dbCon.DbConnection
 }
 
-func (annonceRepo *AnnonceRepository) Add (annonce AnnonceModel) (annonceCreatedId int64, err error){
+func (annonceRepo *AnnonceRepository) Save(annonce AnnonceModel) (annonceCreatedId int64, err error) {
 	db := annonceRepo.DbConnect.Db
 
-	query := `INSERT INTO annonce('id', 'titre', 'contenu', 'categorie_id', 'marque_id', 'model_id', 'created_at'  ) VALUES( ?, ?, ? , ?, ?, ?, ?)`
-	result, err := db.Exec(query, annonce.Id, annonce.Titre, annonce.Contenu, annonce.CategorieId, annonce.MarqueId, annonce.ModeleId, annonce.CreatedAt)
+	query := `INSERT INTO annonce(titre, contenu, categorie_id, marque_id, model_id, created_at ) VALUES( ?, ?, ? , ?, ?, ?)`
+	result, err := db.Exec(query, annonce.Titre, annonce.Contenu, annonce.CategorieId, annonce.MarqueId, annonce.ModeleId, time.Now())
 
 	if err != nil {
 		return 0, err
@@ -29,35 +29,37 @@ func (annonceRepo *AnnonceRepository) Add (annonce AnnonceModel) (annonceCreated
 	return annonceCreatedId, nil
 }
 
-func (annonceRepo *AnnonceRepository) getById(annonceId int) Annonce {
+func (annonceRepo *AnnonceRepository) GetById(annonceId int) (Annonce, error) {
 	db := annonceRepo.DbConnect.Db
 	var annonce Annonce
 
-	query := `SELECT an.id, an.titre, an.contenu, cat.libelle, mq.libelle, md.libelle, an.created_at 
+	query := `SELECT an.id, an.titre, an.contenu, cat.libelle, mq.libelle, md.libelle
 			  FROM annonce as an INNER JOIN categories as cat ON an.categorie_id = cat.id
-			  INNER JOIN modele as md ON an.model_id = md.id 
-			  INNER JOIN marque as mq ON an.marque_id = mq.id
+			  INNER JOIN models as md ON an.model_id = md.id 
+			  INNER JOIN marques as mq ON an.marque_id = mq.id
 			  WHERE an.id = ?`
 
 	row := db.QueryRow(query, annonceId)
-	row.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele, &annonce.CreatedAt, &annonce.UpdatedAt )
-
-	if annonce.Id > 0 {
-		return annonce
+	err := row.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele)
+	if err != nil {
+		return Annonce{}, err
 	}
 
-	return Annonce{}
+	if annonce.Id > 0 {
+		return annonce, nil
+	}
+
+	return Annonce{}, nil
 }
 
-
-func (annonceRepo *AnnonceRepository) getAll() ( []Annonce, error) {
+func (annonceRepo *AnnonceRepository) GetAll() ([]Annonce, error) {
 	db := annonceRepo.DbConnect.Db
 	var allAnnonce []Annonce
 	var annonce Annonce
-	query := `SELECT an.id, an.titre, an.contenu, cat.libelle, mq.libelle, md.libelle, an.created_at 
+	query := `SELECT an.id, an.titre, an.contenu, cat.libelle, mq.libelle, md.libelle
 			  FROM annonce as an INNER JOIN categories as cat ON an.categorie_id = cat.id
-			  INNER JOIN modele as md ON an.model_id = md.id 
-			  INNER JOIN marque as mq ON an.marque_id = mq.id`
+			  INNER JOIN models as md ON an.model_id = md.id 
+			  INNER JOIN marques as mq ON an.marque_id = mq.id`
 
 	rows, err := db.Query(query)
 	defer rows.Close()
@@ -66,18 +68,24 @@ func (annonceRepo *AnnonceRepository) getAll() ( []Annonce, error) {
 		return nil, err
 	}
 
-	for rows.Next(){
-		rows.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele, &annonce.CreatedAt, &annonce.UpdatedAt )
+	for rows.Next() {
+		err = rows.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele)
+
+		if err != nil {
+			return nil, err
+		}
+
 		allAnnonce = append(allAnnonce, annonce)
+
 	}
 
 	return allAnnonce, nil
 }
 
-func (annonceRepo *AnnonceRepository) Delete( annonceId int ) (bool, error){
+func (annonceRepo *AnnonceRepository) Delete(annonceId int) (bool, error) {
 	db := annonceRepo.DbConnect.Db
 	query := `DELETE FROM annonce WHERE id = ?`
-	result, err := db.Exec( query )
+	result, err := db.Exec(query, annonceId)
 
 	if err != nil {
 		return false, err
@@ -90,4 +98,51 @@ func (annonceRepo *AnnonceRepository) Delete( annonceId int ) (bool, error){
 	}
 
 	return false, nil
+}
+
+func (annonceRepo *AnnonceRepository) Update(annonce AnnonceModel) (bool, error) {
+	db := annonceRepo.DbConnect.Db
+	query := `UPDATE annonce SET titre=?, contenu=?, categorie_id=?, marque_id=?, model_id=?, updated_at=?`
+	result, err := db.Exec(query, annonce.Titre, annonce.Contenu, annonce.CategorieId, annonce.MarqueId, annonce.ModeleId, time.Now())
+
+	if err != nil {
+		return false, err
+	}
+
+	rowAffected, err := result.RowsAffected()
+
+	if rowAffected > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (annonceRepo *AnnonceRepository) GetByModelName(model string) (Annonce, error) {
+	db := annonceRepo.DbConnect.Db
+	modelRepo := ModelRepository{DbConnect: annonceRepo.DbConnect}
+	modelId, err := modelRepo.GetModelIdByLibelle(model)
+	if err != nil {
+		return Annonce{}, err
+	}
+
+	if modelId > 0 {
+		var annonce Annonce
+
+		query := `SELECT an.id, an.titre, an.contenu, cat.libelle, mq.libelle, md.libelle
+				  FROM annonce as an INNER JOIN categories as cat ON an.categorie_id = cat.id
+				  INNER JOIN models as md ON an.model_id = md.id 
+				  INNER JOIN marques as mq ON an.marque_id = mq.id
+				  WHERE md.id = ?`
+
+		row := db.QueryRow(query, modelId)
+		err = row.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele)
+		if err != nil {
+			return Annonce{}, err
+		}
+		if annonce.Id > 0 {
+			return annonce, nil
+		}
+	}
+	return Annonce{}, nil
 }
