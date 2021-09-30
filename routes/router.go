@@ -10,6 +10,7 @@ func RouterInit(app *Application) {
 	router := gin.Default()
 	AnControl := (&AnnonceController{}).New(app.Db)
 
+	router.GET("/", AnControl.ChecIfServiceRespond)
 	groupAnn := router.Group("/api/annonce")
 	{
 		groupAnn.POST("/add", AnControl.Add)

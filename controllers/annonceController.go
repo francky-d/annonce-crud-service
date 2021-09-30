@@ -21,6 +21,10 @@ type AnnonceController struct {
 	anRepo  AnnonceRepository
 }
 
+type SearchForm struct {
+	Modele string `json:"modele" binding:"required"`
+}
+
 func (AnCon *AnnonceController) New(dbConnet *dbCon.DbConnection) *AnnonceController {
 	return &AnnonceController{
 		catRepo: CategoryRepository{DbConnect: dbConnet},
@@ -30,7 +34,7 @@ func (AnCon *AnnonceController) New(dbConnet *dbCon.DbConnection) *AnnonceContro
 	}
 }
 
-func (AnCon *AnnonceController) Hello(c *gin.Context) {
+func (AnCon *AnnonceController) ChecIfServiceRespond(c *gin.Context) {
 	c.JSON(
 		200,
 		gin.H{
@@ -119,12 +123,12 @@ func (AnCon *AnnonceController) Add(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while getting Annonce additional Infor ===>  %v", err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err) })
 		return
 	}
 
 	if len(errorsMap) > 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": errorsMap})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": fmt.Sprintf("%v", err)orsMap})
 		return
 	}
 
@@ -140,7 +144,7 @@ func (AnCon *AnnonceController) Add(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while saving annonce to db ===>   %v", err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -155,7 +159,7 @@ func (AnCon *AnnonceController) All(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while getting annonce from db ===>   %v", err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -172,14 +176,14 @@ func (AnCon *AnnonceController) Detail(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while validation id ===>   %v", err)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 	annonce, err := AnCon.anRepo.GetById(idToInt)
 
 	if err != nil {
 		log.Printf("Error while getting annonce for id %d ===>   %v",idToInt, err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -196,7 +200,7 @@ func (AnCon *AnnonceController) Update(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while validation id ===>   %v", err)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -225,7 +229,7 @@ func (AnCon *AnnonceController) Update(c *gin.Context) {
 	annonce, err = AnCon.anRepo.GetById(idToInt)
 	if err != nil {
 		log.Printf("Error while getting annonce for id %d ===>   %v",idToInt, err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -235,12 +239,12 @@ func (AnCon *AnnonceController) Update(c *gin.Context) {
 
 		if err != nil {
 			log.Printf("Error while getting Annonce additional Infor ===>  %v", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 			return
 		}
 
 		if len(errorsMap) > 0 {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": errorsMap})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": fmt.Sprintf("%v", err)orsMap})
 			return
 		}
 
@@ -257,7 +261,7 @@ func (AnCon *AnnonceController) Update(c *gin.Context) {
 
 		if err != nil {
 			log.Printf("Error while updating annonce ===>  %v", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 			return
 		}
 
@@ -278,7 +282,7 @@ func (AnCon *AnnonceController) Delete(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while validation id ===>   %v", err)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -286,7 +290,7 @@ func (AnCon *AnnonceController) Delete(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error while getting annonce for id %d ===>   %v",idToInt, err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
@@ -295,7 +299,7 @@ func (AnCon *AnnonceController) Delete(c *gin.Context) {
 
 		if err != nil {
 			log.Printf("Error while deleting annonce ===>  %v", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("%v", err)})
 			return
 		}
 
@@ -312,17 +316,25 @@ func (AnCon *AnnonceController) Delete(c *gin.Context) {
 
 func (AnCon *AnnonceController) Search(c *gin.Context) {
 	modelRegex := regexp.MustCompile("^[a-zA-Z0-9\\s]*$")
-	modele := c.PostForm("modele")
+	var sarchForm SearchForm
 
-	if !modelRegex.MatchString(modele) {
+	err := c.ShouldBindJSON(&sarchForm)
+
+	if err != nil {
+		log.Printf("Error occured while binding searchForm  %v",  err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v", err)})
+		return
+	}
+
+	if !modelRegex.MatchString(sarchForm.Modele) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Modèle invalide"})
 		return
 	}
-	annonce, err := AnCon.anRepo.GetByModelName(modele)
+	annonce, err := AnCon.anRepo.GetByModelName(sarchForm.Modele)
 
 	if err != nil {
-		log.Printf("Error while retreiving annonce for mode %s ===>   %v", modele, err)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		log.Printf("Error while retreiving annonce for model %s ===>   %v", sarchForm.Modele, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%v", err)})
 		return
 	}
 
