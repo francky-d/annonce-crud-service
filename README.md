@@ -15,7 +15,7 @@ curl -X POST  http://127.0.0.1:8000/api/annonce/add \
 ````
 {
     "id": 1,
-    "message": "Annonce créé avec success"
+    "message": "Annonce créée avec success"
 }
 ```` 
 ***
@@ -30,7 +30,7 @@ curl -X POST   http://127.0.0.1:8000/api/annonce/update/1 \
 ### Reponse  Create annonce
 ````
 {
-    "message:": "Annonce modifié"
+    "message:": "Annonce modifiée"
 }
 ```` 
 ***
@@ -55,7 +55,7 @@ curl  http://127.0.0.1:8000/api/annonce/all \
         },
         {
             "id": 2,
-            "titre": "Vente d'une voiture",
+            "titre": "Voiture de luxe",
             "contenu": "Vente de voiture BMW",
             "categorie": "automobile",
             "marque": "bmw",
@@ -95,7 +95,7 @@ curl http://127.0.0.1:8000/api/annonce/delete/1 \
 ### Reponse  annonce details
 ````
 {
-    "message:": "Annonce supprimé"
+    "message:": "Annonce supprimée"
 }
 ```` 
 ***
@@ -111,7 +111,7 @@ curl    http://127.0.0.1:8000/api/annonce/search \
 ### Reponse  annonce details
 ````
 {
-    "message": "Annonce correspondant au  modele avant M4", 
+    "message": "Annonces correspondantes au  modele avant M4", 
     "annonces": [
         {
             "id": 2,
