@@ -111,14 +111,25 @@ curl    http://127.0.0.1:8000/api/annonce/search \
 ### Reponse  annonce details
 ````
 {
-    "annonce": {
-        "id": 1,
-        "titre": "Vente d'une voiture",
-        "contenu": "Vente de voiture BMW",
-        "categorie": "automobile",
-        "marque": "bmw",
-        "modele": "M4"
-    }
+    "message": "Annonce correspondant au  modele avant M4", 
+    "annonces": [
+        {
+            "id": 2,
+            "titre": "Une voiture de luxe",
+            "contenu": "Vente de voiture BMW",
+            "categorie": "automobile",
+            "marque": "bmw",
+            "modele": "M4"
+        },
+        {
+            "id": 3,
+            "titre": "Vente d'une voiture",
+            "contenu": "Vente de voiture BMW",
+            "categorie": "automobile",
+            "marque": "bmw",
+            "modele": "M4"
+        }
+    ]
 }
 ```` 
 ***

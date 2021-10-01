@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+	"fmt"
 	dbCon "github.com/franck-djacoto/announce-service/db-connection"
 	. "github.com/franck-djacoto/announce-service/models"
 	"time"
@@ -118,16 +120,16 @@ func (annonceRepo *AnnonceRepository) Update(annonce AnnonceModel) (bool, error)
 	return false, nil
 }
 
-func (annonceRepo *AnnonceRepository) GetByModelName(model string) (Annonce, error) {
+func (annonceRepo *AnnonceRepository) GetByModelName(model string) ([]Annonce, error) {
 	db := annonceRepo.DbConnect.Db
 	modelRepo := ModelRepository{DbConnect: annonceRepo.DbConnect}
 	modelId, err := modelRepo.GetModelIdByLibelle(model)
 	if err != nil {
-		return Annonce{}, err
+		return nil, err
 	}
 
 	if modelId > 0 {
-		var annonce Annonce
+		var allAnnonces []Annonce
 
 		query := `SELECT an.id, an.titre, an.contenu, cat.libelle, mq.libelle, md.libelle
 				  FROM annonce as an INNER JOIN categories as cat ON an.categorie_id = cat.id
@@ -135,14 +137,22 @@ func (annonceRepo *AnnonceRepository) GetByModelName(model string) (Annonce, err
 				  INNER JOIN marques as mq ON an.marque_id = mq.id
 				  WHERE md.id = ?`
 
-		row := db.QueryRow(query, modelId)
-		err = row.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele)
+		rows, err := db.Query(query, modelId)
 		if err != nil {
-			return Annonce{}, err
+			return nil, err
 		}
-		if annonce.Id > 0 {
-			return annonce, nil
+
+
+		for rows.Next(){
+			var annonce Annonce
+			rows.Scan(&annonce.Id, &annonce.Titre, &annonce.Contenu, &annonce.Categorie, &annonce.Marque, &annonce.Modele)
+			allAnnonces =  append(allAnnonces, annonce)
+		}
+
+		if len(allAnnonces) > 0 {
+			return allAnnonces, nil
 		}
 	}
-	return Annonce{}, nil
+
+	return nil, errors.New( fmt.Sprintf("Announce not found for model %s", model) )
 }

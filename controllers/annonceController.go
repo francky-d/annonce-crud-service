@@ -330,7 +330,7 @@ func (AnCon *AnnonceController) Search(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Modèle invalide"})
 		return
 	}
-	annonce, err := AnCon.anRepo.GetByModelName(sarchForm.Modele)
+	annonces, err := AnCon.anRepo.GetByModelName(sarchForm.Modele)
 
 	if err != nil {
 		log.Printf("Error while retreiving annonce for model %s ===>   %v", sarchForm.Modele, err)
@@ -338,9 +338,9 @@ func (AnCon *AnnonceController) Search(c *gin.Context) {
 		return
 	}
 
-	if annonce.Id > 0 {
-		c.JSON(http.StatusOK, gin.H{"annonce": annonce})
+	if len(annonces) > 0 {
+		c.JSON(http.StatusOK, gin.H{"message":fmt.Sprintf("Annonce correspondant au  modele %s", sarchForm.Modele),"annonces": annonces})
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"message:": "Auncune annonce trouvée pour ce modèle"})
+		c.JSON(http.StatusBadRequest, gin.H{"message:": fmt.Sprintf("Aunce annonce trouvé pour le modèle %s", sarchForm.Modele)})
 	}
 }
