@@ -12,19 +12,17 @@ func LoadEnv() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		log.Fatalf("Error while loading .env file : %v", err)
+		log.Fatalf("Error while loading .env file ===> %v", err)
 	}
 }
 
-func init() {
-
-}
 
 func main() {
 	LoadEnv()
 	var App Application
 	App.Db = dbCon.NewConnection()
-	App.Db.MakeMigration()
+	App.Db = dbCon.NewConnection()
+	App.Db.MakeMigrationIfNoYetDone()
 	routes.RouterInit(&App)
 
 }

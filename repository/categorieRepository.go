@@ -1,10 +1,37 @@
 package repository
 
-import dbCon "github.com/franck-djacoto/announce-service/db-connection"
+import (
+	dbCon "github.com/franck-djacoto/announce-service/db-connection"
+	"github.com/franck-djacoto/announce-service/models"
+)
 
 type CategoryRepository struct {
 	DbConnect *dbCon.DbConnection
 }
+
+func (catRepo *CategoryRepository) GetAll() ([]models.Categorie, error) {
+	db := catRepo.DbConnect.Db
+	var allCat []models.Categorie
+	var singleCat models.Categorie
+	query := `select id, libelle from categories`
+	rows, err := db.Query(query)
+	defer rows.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next(){
+		err = rows.Scan(&singleCat.Id, singleCat.Libelle)
+		if err != nil {
+			return nil, err
+		}
+
+		allCat =  append(allCat, singleCat)
+	}
+	return allCat, nil
+}
+
 
 func (catRepo *CategoryRepository) GetCatIdByLibelle(catLibelle string) (int, error) {
 	db := catRepo.DbConnect.Db
@@ -29,3 +56,5 @@ func (catRepo *CategoryRepository) GetCatLibelleById(catId int) (string, error) 
 	}
 	return catLibelle, nil
 }
+
+

@@ -70,3 +70,19 @@ func (dbConnect *DbConnection) MakeMigration() {
 	fmt.Println("Migration was successfull!")
 
 }
+
+func (dbConnect *DbConnection) MakeMigrationIfNoYetDone() {
+	fmt.Println("Checking if migration is already done")
+	db := dbConnect.Db
+	var count int
+	query := `SELECT count(*)  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?`
+	row := db.QueryRow(query, os.Getenv("DB_NAME") )
+	row.Scan(&count)
+	if count > 0 {
+		fmt.Println("Migration is already done ! ")
+		return
+	}
+
+	fmt.Println("Migration is not yet done.")
+	dbConnect.MakeMigration()
+}
