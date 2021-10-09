@@ -21,7 +21,6 @@ func main() {
 	LoadEnv()
 	var App Application
 	App.Db = dbCon.NewConnection()
-	App.Db = dbCon.NewConnection()
 	App.Db.MakeMigrationIfNoYetDone()
 	routes.RouterInit(&App)
 
