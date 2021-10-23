@@ -5,8 +5,8 @@ an announcement.
 ***
 
 ## Created with MVC architecture and using docker
-Although it's a simple REST Api, I decide to created on an MVC architecture from scratch (yeah it's true the 'V' part is missing here ^ ^). <br/>
-I used docker to make it easier to be launched for anyone cloning to project and having docker on is machine.
+Although it's a simple REST Api, I decide to create it on an MVC architecture from scratch (yeah it's true the 'V' part is missing here ^ ^). <br/>
+I used docker to make it easier to be launched for anyone cloning to project and having docker on his machine.
 
 ***
 
