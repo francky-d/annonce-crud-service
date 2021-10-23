@@ -1,9 +1,22 @@
+# About this project 
+This project is just a simple REST Api created in Go language that allow you to create, read, update, delete 
+an announcement. 
+
+***
+
+## Created with MVC architecture and using docker
+Although it's a simple REST Api, I decide to created on an MVC architecture from scratch (yeah it's true the 'V' part is missing here ^ ^). <br/>
+I used docker to make it easier to be launched for anyone cloning to project and having docker on is machine.
+
+***
+
 # How to run the project
 1. Clone the project  
 2. Being at the root of the project, just run `docker-compose up`
 ***
 
 # Making request
+Once your have started the program you can open a `terminal` and make request using `curl` 
 ## Create an announce
 
 ````
