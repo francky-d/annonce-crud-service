@@ -1,6 +1,5 @@
-version: '2.2'
 services:
-  db :
+  db:
     image: mysql/mysql-server
     container_name: db-container
     ports:
@@ -13,23 +12,24 @@ services:
     networks:
       - leboncoin
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 45s
       interval: 5s
       retries: 10
     volumes:
       - ./docker-compose/mysql:/docker-entrypoint-initdb.d
 
-  app :
-    build : .
+  app:
+    build: 
+      context: .
+      dockerfile: ./Containerfile
+
     container_name: app-container
     volumes:
       - ".:/app"
     depends_on:
       db:
         condition: service_healthy
-    links:
-      - db
     ports:
       - "8000:8000"
     networks:
